@@ -1,0 +1,91 @@
+{
+  "name": "course-crew",
+  "version": "1.0.0",
+  "description": "A full-pipeline production crew for WorkBuddy course recording: script, storyboard, voiceover, animation and final video assembly.",
+  "author": {
+    "name": "尧哥AI",
+    "email": "yaoge-ai@workbuddy.cn"
+  },
+  "agents": [
+    "./agents/course-crew-team-lead.md",
+    "./agents/content-director.md",
+    "./agents/voice-director.md",
+    "./agents/video-director.md",
+    "./agents/reviewer.md"
+  ],
+  "skills": ["./skills/production-spec", "./skills/animation-spec", "./skills/course-visual-library"],
+
+  "expertType": "team",
+  "agentName": "course-crew-team-lead",
+  "teamInfo": {
+    "leadAgent": "course-crew-team-lead",
+    "memberAgents": ["content-director", "voice-director", "video-director", "reviewer"]
+  },
+
+  "displayName": {
+    "en": "Course Production Crew",
+    "zh": "课程制片团"
+  },
+  "profession": {
+    "en": "Course Production Crew",
+    "zh": "课程制片团"
+  },
+  "displayDescription": {
+    "en": "A full-pipeline crew for WorkBuddy course recording, covering script, storyboard, voiceover, animation and final editing into publish-ready videos.",
+    "zh": "WorkBuddy 课程录制全流程制片团，覆盖逐字稿、分镜、配音、音效、动画与成片合成。"
+  },
+  "avatar": "avatars/team.png",
+  "categoryId": "06-ContentCreative",
+  "defaultInitPrompt": {
+    "zh": "帮我录一节 WorkBuddy 课程：先写逐字稿和分镜，再配音，然后做动画，最后合成成片。",
+    "en": "Help me produce a WorkBuddy course: write the script and storyboard, then voiceover, then animation, and finally assemble the video."
+  },
+  "plugin": "course-crew",
+  "tags": [
+    { "en": "Course Recording", "zh": "课程录制" },
+    { "en": "Video Production", "zh": "视频制作" },
+    { "en": "Voiceover", "zh": "语音配音" }
+  ],
+  "quickPrompts": [
+    { "en": "Help me produce a WorkBuddy course: write the script and storyboard, then voiceover, then animation, and finally assemble the video.", "zh": "帮我录一节 WorkBuddy 课程：先写逐字稿和分镜，再配音，然后做动画，最后合成成片。" },
+    { "en": "Polish this voiceover script to sound natural and generate a TTS-ready version.", "zh": "把这段口播稿优化成口语化、适合配音的版本，并生成 TTS 朗读稿。" },
+    { "en": "Create concept animations with Remotion based on this storyboard and assemble a synced video.", "zh": "根据这份分镜脚本，用 Remotion 制作概念动画并合成音画对齐的成片。" }
+  ],
+  "members": [
+    {
+      "id": "course-crew-team-lead",
+      "displayName": { "en": "Zhou", "zh": "周全片" },
+      "profession": { "en": "Production Director", "zh": "制片总监" },
+      "avatar": "avatars/course-crew-team-lead.png",
+      "role": "lead"
+    },
+    {
+      "id": "content-director",
+      "displayName": { "en": "Wen", "zh": "文成稿" },
+      "profession": { "en": "Content Director", "zh": "内容编导" },
+      "avatar": "avatars/content-director.png",
+      "role": "member"
+    },
+    {
+      "id": "voice-director",
+      "displayName": { "en": "Feng", "zh": "冯佳音" },
+      "profession": { "en": "Voice Director", "zh": "语音配音" },
+      "avatar": "avatars/voice-director.png",
+      "role": "member"
+    },
+    {
+      "id": "video-director",
+      "displayName": { "en": "Ying", "zh": "影成帧" },
+      "profession": { "en": "Video Director", "zh": "视频导演" },
+      "avatar": "avatars/video-director.png",
+      "role": "member"
+    },
+    {
+      "id": "reviewer",
+      "displayName": { "en": "Yan", "zh": "严把关" },
+      "profession": { "en": "Review Director", "zh": "审片导演" },
+      "avatar": "avatars/reviewer.png",
+      "role": "member"
+    }
+  ]
+}

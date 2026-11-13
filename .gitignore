@@ -1,0 +1,20 @@
+# Node / Remotion / OpenFilm 依赖
+node_modules/
+.remotion/
+out/
+*.mp4
+*.mp3
+*.png
+*.jpg
+*.jpeg
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 个人工作区（不随仓库分发）
+remotion/
+openfilm/
+output/
+03_素材/
+04_成片/
