@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent;
+    font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif; }
+  .stage { position:absolute; inset:0; }
+
+  /* 深色多层渐变背景 */
+  .bg { position:absolute; inset:0; background:
+    radial-gradient(1300px 750px at 50% 38%, rgba(56,110,246,0.30), transparent 62%),
+    radial-gradient(900px 620px at 50% 104%, rgba(168,85,247,0.22), transparent 60%),
+    radial-gradient(620px 420px at 16% 18%, rgba(34,211,238,0.12), transparent 60%),
+    radial-gradient(520px 360px at 86% 30%, rgba(99,102,241,0.12), transparent 60%),
+    linear-gradient(180deg, #04060d 0%, #0a1122 52%, #070b18 100%); }
+  .vignette { position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.5) 100%); }
+
+  /* 机器人脚下发光地板 */
+  .floor { position:absolute; left:50%; top:62%; width:980px; height:240px; transform:translate(-50%,-50%);
+    background:radial-gradient(ellipse at center, rgba(56,189,248,0.22), rgba(99,102,241,0.10) 45%, transparent 72%); }
+
+  /* 粒子 */
+  .dot { position:absolute; border-radius:50%; }
+
+  /* 机器人环绕轨道 */
+  .orbit { position:absolute; left:50%; top:46%; width:360px; height:360px; transform:translate(-50%,-50%);
+    border:1.5px dashed rgba(125,211,252,0.32); border-radius:50%; }
+
+  /* 气泡（玻璃拟态） */
+  .bubble { position:absolute; padding:26px 44px; border-radius:26px; color:#eaf2ff;
+    border:1px solid rgba(140,170,220,0.28);
+    background:linear-gradient(180deg, rgba(120,150,210,0.18), rgba(90,110,170,0.08));
+    box-shadow:0 24px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.10);
+    backdrop-filter:blur(2px); }
+  .bubble .who { font-size:28px; letter-spacing:6px; opacity:0.62; font-weight:400; }
+  .bubble .who::before { content:''; display:inline-block; width:10px; height:10px; border-radius:50%;
+    background:#7dd3fc; margin-right:12px; vertical-align:middle;
+    box-shadow:0 0 12px rgba(125,211,252,0.9); }
+  .bubble .say { font-size:54px; font-weight:700; margin-top:12px; letter-spacing:6px; line-height:1.05; }
+  .bub-l { left:300px; top:300px; text-align:left; }
+  .bub-r { right:300px; top:470px; text-align:right; }
+
+  /* 能量爆发容器（机器人中心） */
+  .burst { position:absolute; left:50%; top:46%; width:0; height:0; }
+  .ring { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    border-radius:50%; border:3px solid rgba(125,211,252,0.55);
+    box-shadow:0 0 30px rgba(56,189,248,0.55), inset 0 0 20px rgba(125,211,252,0.3); }
+  .flash { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.95), rgba(125,211,252,0.55) 40%, transparent 70%); }
+  .bp { position:absolute; left:50%; top:50%; border-radius:50%; }
+
+  /* 机器人 */
+  .robot-wrap { position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); }
+  .robot { width:260px; height:230px; filter:drop-shadow(0 0 34px rgba(56,189,248,0.45)); }
+
+  /* 工具标签 */
+  .tools { position:absolute; left:50%; top:600px; transform:translateX(-50%); display:flex; gap:44px; }
+  .tool { padding:16px 36px; border-radius:16px; font-size:32px; font-weight:600; letter-spacing:4px; color:#dbe6f5;
+    border:1px solid rgba(140,170,220,0.3); background:rgba(120,150,210,0.12);
+    box-shadow:0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08); }
+
+  /* 标题（排版重点） */
+  .title { position:absolute; left:50%; top:678px; transform:translateX(-50%);
+    text-align:center; white-space:nowrap; padding:10px 30px; overflow:hidden; line-height:1.15; }
+  .title .pre { font-size:70px; font-weight:600; color:#c6d6ee; letter-spacing:10px;
+    text-shadow:0 0 24px rgba(56,189,248,0.35); }
+  .title .hl { font-size:96px; font-weight:800; letter-spacing:12px; margin-left:6px;
+    background:linear-gradient(100deg, #38bdf8 0%, #a5f3fc 38%, #fbbf24 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 18px rgba(56,189,248,0.45)) drop-shadow(0 0 30px rgba(251,191,36,0.25)); }
+  .sweep { position:absolute; top:0; bottom:0; width:220px; transform:skewX(-18deg);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="bg"></div>
+  <div id="particles"></div>
+  <div class="vignette"></div>
+  <div class="floor" id="floor"></div>
+  <div class="orbit" id="orbit"></div>
+
+  <div class="bubble bub-l" id="bubL">
+    <div class="who">你</div>
+    <div class="say">问一句</div>
+  </div>
+  <div class="bubble bub-r" id="bubR">
+    <div class="who">它</div>
+    <div class="say">答一句</div>
+  </div>
+
+  <div class="burst" id="burst">
+    <div class="flash" id="flash"></div>
+  </div>
+
+  <div class="robot-wrap" id="robotWrap">
+    <svg class="robot" viewBox="0 0 260 230">
+      <defs>
+        <linearGradient id="body" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#38bdf8"/>
+          <stop offset="0.55" stop-color="#6366f1"/>
+          <stop offset="1" stop-color="#a855f7"/>
+        </linearGradient>
+        <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0b1224"/>
+          <stop offset="1" stop-color="#101b36"/>
+        </linearGradient>
+      </defs>
+      <g id="armL"><rect x="16" y="92" width="14" height="70" rx="7" fill="url(#body)"/><circle cx="23" cy="164" r="9" fill="#38bdf8"/></g>
+      <g id="armR"><rect x="230" y="92" width="14" height="70" rx="7" fill="url(#body)"/><circle cx="237" cy="164" r="9" fill="#38bdf8"/></g>
+      <g id="legL"><rect x="88" y="196" width="14" height="34" rx="7" fill="url(#body)"/></g>
+      <g id="legR"><rect x="158" y="196" width="14" height="34" rx="7" fill="url(#body)"/></g>
+      <rect x="40" y="34" width="180" height="168" rx="34" fill="url(#body)"/>
+      <rect x="66" y="62" width="128" height="86" rx="20" fill="url(#face)" stroke="rgba(120,170,255,0.5)" stroke-width="2"/>
+      <rect x="70" y="74" width="120" height="2" rx="1" fill="rgba(125,211,252,0.22)"/>
+      <g id="eyeL" transform="translate(104,100)"><circle r="10" fill="#7dd3fc"/><circle r="17" fill="none" stroke="rgba(125,211,252,0.35)" stroke-width="2"/></g>
+      <g id="eyeR" transform="translate(156,100)"><circle r="10" fill="#7dd3fc"/><circle r="17" fill="none" stroke="rgba(125,211,252,0.35)" stroke-width="2"/></g>
+      <path d="M112 128 Q130 142 148 128" stroke="#7dd3fc" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle id="core" cx="130" cy="170" r="6" fill="#fbbf24"/>
+      <circle cx="130" cy="170" r="12" fill="none" stroke="rgba(251,191,36,0.4)" stroke-width="2"/>
+      <rect x="126" y="24" width="8" height="14" rx="4" fill="#38bdf8"/>
+      <circle id="antenna" cx="130" cy="16" r="8" fill="#7dd3fc"/>
+      <circle id="antennaGlow" cx="130" cy="16" r="16" fill="none" stroke="rgba(125,211,252,0.6)" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <div class="tools" id="tools">
+    <div class="tool">翻文件</div>
+    <div class="tool">点按钮</div>
+    <div class="tool">把活干完</div>
+  </div>
+
+  <div class="title" id="title">
+    <span class="pre">从「会聊天」到</span><span class="hl">会干活</span>
+    <div class="sweep" id="sweep"></div>
+  </div>
+</div>
+
+<script>
+  const W = 1920, H = 1080;
+  const CX = W / 2, CY = H * 0.46; // 机器人中心
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+  function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
+  function easeOutBack(x){ const c1=1.70158, c3=c1+1; return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2); }
+  function easeInOutCubic(x){ return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; }
+  function seg(t, a, b){ return clamp01((t - a) / (b - a)); }
+  function mix(a, b, k){ return a + (b - a) * k; }
+  function wrap(v, m){ v = v % m; if (v < 0) v += m; return v; }
+
+  const bubL = document.getElementById('bubL');
+  const bubR = document.getElementById('bubR');
+  const robotWrap = document.getElementById('robotWrap');
+  const tools = document.getElementById('tools');
+  const toolEls = Array.prototype.slice.call(document.querySelectorAll('.tool'));
+  const title = document.getElementById('title');
+  const sweep = document.getElementById('sweep');
+  const floor = document.getElementById('floor');
+  const orbit = document.getElementById('orbit');
+  const burst = document.getElementById('burst');
+
+  const armL = document.getElementById('armL');
+  const armR = document.getElementById('armR');
+  const legL = document.getElementById('legL');
+  const legR = document.getElementById('legR');
+  const eyeL = document.getElementById('eyeL');
+  const eyeR = document.getElementById('eyeR');
+  const antenna = document.getElementById('antenna');
+  const antennaGlow = document.getElementById('antennaGlow');
+  const core = document.getElementById('core');
+  const flash = document.getElementById('flash');
+
+  // 气泡中心（用于汇聚到机器人）
+  const bubLcx = bubL.offsetLeft + bubL.offsetWidth / 2;
+  const bubLcy = bubL.offsetTop + bubL.offsetHeight / 2;
+  const bubRcx = bubR.offsetLeft + bubR.offsetWidth / 2;
+  const bubRcy = bubR.offsetTop + bubR.offsetHeight / 2;
+  const dLx = CX - bubLcx, dLy = CY - bubLcy;
+  const dRx = CX - bubRcx, dRy = CY - bubRcy;
+
+  // 流动粒子（向上漂浮，确定性）
+  const P = 60;
+  const parts = [];
+  const pc = document.getElementById('particles');
+  const pCols = ['#7dd3fc', '#93c5fd', '#c4b5fd'];
+  for (let i = 0; i < P; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    const sz = 2 + (i % 4) * 1.7;
+    const col = pCols[i % 3];
+    d.style.width = d.style.height = sz + 'px';
+    d.style.background = col;
+    d.style.boxShadow = '0 0 ' + (6 + sz) + 'px ' + col;
+    pc.appendChild(d);
+    parts.push({ el: d, px: (i * 137.5) % W, py: (i * 211.3) % 800,
+      a: (i % 7) * 0.9, sp: 0.3 + (i % 5) * 0.12, amp: 8 + (i % 6) * 6,
+      rise: 8 + (i % 4) * 7, o: 0.25 + (i % 5) * 0.1 });
+  }
+
+  // 能量爆发：光环 + 迸发粒子
+  const rings = [];
+  for (let i = 0; i < 3; i++) {
+    const r = document.createElement('div');
+    r.className = 'ring';
+    burst.appendChild(r);
+    rings.push({ el: r, t0: 3.62 + i * 0.16 });
+  }
+  const BP = 24;
+  const burstParts = [];
+  for (let i = 0; i < BP; i++) {
+    const d = document.createElement('div');
+    d.className = 'bp';
+    const sz = 4 + (i % 3) * 3;
+    d.style.width = d.style.height = sz + 'px';
+    const col = (i % 4 === 0) ? '#fbbf24' : '#7dd3fc';
+    d.style.background = col;
+    d.style.boxShadow = '0 0 ' + (8 + sz) + 'px ' + col;
+    burst.appendChild(d);
+    const ang = (i / BP) * Math.PI * 2 + 0.35;
+    burstParts.push({ el: d, dx: Math.cos(ang), dy: Math.sin(ang), sp: 150 + (i % 5) * 26 });
+  }
+
+  function eyeScaleY(t){
+    let ph = (t - 4.4) % 3.2; if (ph < 0) ph += 3.2;
+    if (ph < 0.14) { const k = ph / 0.14; return 1 - 0.95 * Math.sin(Math.PI * k); }
+    return 1;
+  }
+
+  window.film = {
+    duration: 8,
+    frame(t) {
+      // 粒子流动
+      for (let i = 0; i < P; i++) {
+        const p = parts[i];
+        const y = wrap(p.py + Math.sin(t * p.sp + p.a) * p.amp - t * p.rise, 800);
+        const x = wrap(p.px + Math.cos(t * p.sp * 0.8 + p.a) * p.amp * 0.5, W);
+        p.el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+        p.el.style.opacity = p.o * (0.7 + 0.3 * Math.sin(t * 0.5 + p.a));
+      }
+
+      // 地板光脉动
+      floor.style.opacity = 0.5 + 0.2 * Math.sin(t * 1.1);
+
+      // 气泡：弹性进入 → 汇聚成机器人
+      const convK = easeOutCubic(seg(t, 3.0, 3.9));
+      const lIn = easeOutCubic(seg(t, 0.2, 1.4));
+      const lPop = easeOutBack(clamp01(seg(t, 0.2, 1.1)));
+      bubL.style.opacity = lIn * (1 - convK);
+      bubL.style.transform = 'translate(' + (dLx * convK) + 'px,' + ((1 - lIn) * 40 + dLy * convK) + 'px) scale(' + (lPop * (1 - 0.55 * convK)) + ')';
+
+      const rIn = easeOutCubic(seg(t, 1.2, 2.4));
+      const rPop = easeOutBack(clamp01(seg(t, 1.2, 2.3)));
+      bubR.style.opacity = rIn * (1 - convK);
+      bubR.style.transform = 'translate(' + (dRx * convK) + 'px,' + ((1 - rIn) * 40 + dRy * convK) + 'px) scale(' + (rPop * (1 - 0.55 * convK)) + ')';
+
+      // 能量爆发：闪光 + 光环 + 迸发粒子
+      const fk = seg(t, 3.6, 4.15);
+      flash.style.opacity = 1 - fk;
+      flash.style.transform = 'translate(-50%,-50%) scale(' + mix(0.4, 2.6, easeOutCubic(fk)) + ')';
+      for (let i = 0; i < rings.length; i++) {
+        const r = rings[i];
+        const k = clamp01(seg(t, r.t0, r.t0 + 0.75));
+        const d = mix(30, 460, easeOutCubic(k));
+        r.el.style.width = r.el.style.height = d + 'px';
+        r.el.style.opacity = (1 - k) * 0.9;
+      }
+      for (let i = 0; i < BP; i++) {
+        const b = burstParts[i];
+        const k = clamp01(seg(t, 3.6, 4.3));
+        const dist = b.sp * easeOutCubic(k);
+        b.el.style.transform = 'translate(-50%,-50%) translate(' + (b.dx * dist) + 'px,' + (b.dy * dist) + 'px)';
+        b.el.style.opacity = 1 - k;
+      }
+
+      // 轨道环绕
+      orbit.style.opacity = seg(t, 3.7, 4.2);
+      orbit.style.transform = 'translate(-50%,-50%) rotate(' + ((t - 3.7) * 14) + 'deg)';
+
+      // 机器人弹出 + 呼吸 + 悬浮
+      const rIn2 = seg(t, 3.7, 4.7);
+      const rScale = rIn2 < 1 ? easeOutBack(rIn2) : 1;
+      const breath = Math.sin((t - 4.7) * 2.0) * 0.015;
+      const floatY = Math.sin((t - 4.7) * 1.6) * 8;
+      robotWrap.style.opacity = seg(t, 3.7, 4.0);
+      robotWrap.style.transform = 'translate(-50%,-50%) scale(' + (rScale * (1 + breath)) + ') translateY(' + floatY + 'px)';
+
+      // 手脚伸出
+      const limb = easeOutCubic(seg(t, 4.6, 5.3));
+      armL.setAttribute('x', 16 - (1 - limb) * 26);
+      armR.setAttribute('x', 230 + (1 - limb) * 26);
+      legL.setAttribute('y', 196 + (1 - limb) * 26);
+      legR.setAttribute('y', 196 + (1 - limb) * 26);
+
+      // 眼睛眨眼 / 天线闪光 / 胸口核心脉动
+      const sy = eyeScaleY(t);
+      eyeL.setAttribute('transform', 'translate(104,100) scale(1,' + sy + ')');
+      eyeR.setAttribute('transform', 'translate(156,100) scale(1,' + sy + ')');
+      const antPh = (t - 4.5) % 2.4; 
+      let antG = 0.35 + 0.35 * Math.sin(t * 4.0);
+      if (antPh >= 0 && antPh < 0.18) antG += 0.6 * (1 - antPh / 0.18);
+      antennaGlow.style.opacity = clamp01(antG);
+      antenna.style.opacity = 0.7 + 0.3 * Math.sin(t * 4.0);
+      core.style.opacity = 0.7 + 0.3 * Math.sin(t * 2.6);
+
+      // 工具标签：错峰弹性浮现
+      for (let i = 0; i < toolEls.length; i++) {
+        const s0 = 5.0 + i * 0.3;
+        const k = easeOutBack(clamp01(seg(t, s0, s0 + 0.7)));
+        const o = easeOutCubic(clamp01(seg(t, s0, s0 + 0.4)));
+        toolEls[i].style.opacity = o;
+        toolEls[i].style.transform = 'translateY(' + ((1 - k) * 30) + 'px) scale(' + k + ')';
+      }
+
+      // 标题浮现 + 扫光
+      const tiIn = easeOutCubic(seg(t, 5.8, 7.0));
+      title.style.opacity = tiIn;
+      title.style.transform = 'translateX(-50%) translateY(' + ((1 - tiIn) * 26) + 'px)';
+      const sw = seg(t, 6.8, 7.9);
+      sweep.style.left = mix(-260, title.offsetWidth + 60, sw) + 'px';
+      sweep.style.opacity = sw < 0.02 || sw > 0.98 ? 0 : 1;
+    }
+  };
+</script>
+</body>
+</html>

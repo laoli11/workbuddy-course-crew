@@ -19,6 +19,7 @@
       "scene": "气泡问答 → 能量爆发 → 机器人长出工具动手干活",
       "action": "气泡弹性缩放→汇聚收缩成机器人→光晕爆发+粒子迸发→工具标签浮现→底部标题扫光",
       "source": "openfilm/scene2 (第一课段2)",
+      "code": "templates/WB-C01.html",
       "status": "已有",
       "quality": "对标 T05c"
     },
@@ -30,6 +31,7 @@
       "scene": "左卡片(聊天式AI) ↔ 发光箭头 ↔ 右卡片(WorkBuddy会干活)",
       "action": "左右卡片错峰飞入→中间发光箭头+能量粒子左→右流动→右卡片三栏办公/开发/设计→底部标题",
       "source": "openfilm/scene3 (第一课段3)",
+      "code": "templates/WB-C02.html",
       "status": "已有"
     },
     {
@@ -40,6 +42,7 @@
       "scene": "中心 WorkBuddy 发光方块 + 四周标签飞入连线",
       "action": "四周5标签错峰飞入→5条发光线连回中心→沿线上流动数据粒子→徽章弹性弹出→底部标题",
       "source": "openfilm/scene4 (第一课段4)",
+      "code": "templates/WB-C03.html",
       "status": "已有"
     },
     {

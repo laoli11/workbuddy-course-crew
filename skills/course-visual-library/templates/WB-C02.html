@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent;
+    font-family:'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif; }
+  .stage { position:absolute; inset:0; }
+
+  /* 深色多层渐变背景（与段2一致） */
+  .bg { position:absolute; inset:0; background:
+    radial-gradient(1300px 750px at 50% 38%, rgba(56,110,246,0.30), transparent 62%),
+    radial-gradient(900px 620px at 50% 104%, rgba(168,85,247,0.22), transparent 60%),
+    radial-gradient(620px 420px at 16% 18%, rgba(34,211,238,0.12), transparent 60%),
+    radial-gradient(520px 360px at 86% 30%, rgba(99,102,241,0.12), transparent 60%),
+    linear-gradient(180deg, #04060d 0%, #0a1122 52%, #070b18 100%); }
+  .vignette { position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.5) 100%); }
+
+  .dot { position:absolute; border-radius:50%; }
+
+  /* 玻璃拟态卡片 */
+  .card { position:absolute; border-radius:30px;
+    border:1px solid rgba(140,170,220,0.28);
+    background:linear-gradient(180deg, rgba(120,150,210,0.16), rgba(90,110,170,0.07));
+    box-shadow:0 24px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.10);
+    overflow:hidden; }
+  .card::after { content:''; position:absolute; left:0; top:0; width:100%; height:4px;
+    background:linear-gradient(90deg, transparent, rgba(125,211,252,0.7), transparent); }
+
+  /* 左卡片：聊天式 AI */
+  .cardL { left:210px; top:235px; width:540px; height:390px; }
+  .cardL::after { background:linear-gradient(90deg, transparent, rgba(125,211,252,0.8), transparent); }
+  .tag { padding:26px 34px 0; }
+  .tag .t1 { font-size:38px; font-weight:700; color:#eaf2ff; letter-spacing:4px; }
+  .tag .t1 .accent { background:linear-gradient(100deg,#38bdf8,#a5f3fc); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .tag .t2 { font-size:24px; letter-spacing:6px; opacity:0.55; color:#c6d6ee; margin-top:6px; }
+
+  /* 聊天气泡（卡片内） */
+  .chat { position:absolute; left:0; right:0; top:140px; padding:0 30px; }
+  .qb { display:flex; align-items:flex-start; gap:14px; margin-bottom:20px; }
+  .qb .av { width:44px; height:44px; border-radius:14px; flex:none; background:linear-gradient(135deg,#38bdf8,#6366f1);
+    box-shadow:0 0 16px rgba(56,189,248,0.5); position:relative; }
+  .qb .av.you::after { content:'你'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#0b1224; font-weight:800; font-size:22px; }
+  .qb .av.ai { background:linear-gradient(135deg,#a855f7,#6366f1); box-shadow:0 0 16px rgba(168,85,247,0.5); }
+  .qb .av.ai::after { content:'AI'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:20px; }
+  .qb .msg { flex:1; padding:18px 24px; border-radius:18px; color:#eaf2ff; font-size:30px; font-weight:500; letter-spacing:2px; line-height:1.25;
+    border:1px solid rgba(140,170,220,0.22); background:rgba(120,150,210,0.14);
+    box-shadow:0 8px 22px rgba(0,0,0,0.28); }
+  .qb .msg .who { display:block; font-size:20px; letter-spacing:3px; opacity:0.55; margin-bottom:4px; }
+  .qb.user .msg { background:linear-gradient(135deg, rgba(56,189,248,0.22), rgba(99,102,241,0.16)); }
+  .qb.ai .msg { background:rgba(120,150,210,0.10); }
+
+  /* 右卡片：WorkBuddy 会干活 */
+  .cardR { left:1170px; top:235px; width:540px; height:390px; }
+  .cardR::after { background:linear-gradient(90deg, transparent, rgba(251,191,36,0.85), transparent); }
+  .tagR .t1 .accent { background:linear-gradient(100deg,#38bdf8,#a5f3fc,#fbbf24); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .cols { position:absolute; left:24px; right:24px; top:150px; display:flex; gap:16px; }
+  .col { flex:1; border-radius:20px; padding:18px 0 20px; text-align:center;
+    border:1px solid rgba(140,170,220,0.22); background:rgba(120,150,210,0.10);
+    box-shadow:0 8px 22px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.07); }
+  .col .ic { width:56px; height:56px; margin:0 auto 12px; border-radius:16px; position:relative;
+    display:flex; align-items:center; justify-content:center; }
+  .col .ic svg { width:30px; height:30px; }
+  .col .ct { font-size:32px; font-weight:700; color:#eaf2ff; letter-spacing:3px; }
+  .col .cd { font-size:20px; letter-spacing:2px; color:#9fb4d6; opacity:0.75; margin-top:6px; }
+  .col.off .ic { background:linear-gradient(135deg,#38bdf8,#6366f1); box-shadow:0 0 18px rgba(56,189,248,0.45); }
+  .col.dev .ic { background:linear-gradient(135deg,#a855f7,#6366f1); box-shadow:0 0 18px rgba(168,85,247,0.45); }
+  .col.des .ic { background:linear-gradient(135deg,#f59e0b,#f43f5e); box-shadow:0 0 18px rgba(251,146,60,0.45); }
+
+  /* 中间发光箭头 */
+  .arrow { position:absolute; left:760px; top:390px; width:410px; height:80px; overflow:visible; }
+  .energy { position:absolute; width:10px; height:10px; border-radius:50%; background:#7dd3fc;
+    box-shadow:0 0 12px #7dd3fc, 0 0 22px rgba(56,189,248,0.7); }
+
+  /* 干活能量标签 */
+  .work-badge { position:absolute; left:50%; top:418px; transform:translateX(-50%); padding:14px 40px;
+    border-radius:40px; color:#0b1224; font-size:34px; font-weight:800; letter-spacing:8px;
+    background:linear-gradient(100deg,#38bdf8,#a5f3fc,#fbbf24);
+    box-shadow:0 0 30px rgba(56,189,248,0.55), 0 0 50px rgba(251,191,36,0.3); }
+
+  /* 标题（排版与段2一致） */
+  .title { position:absolute; left:50%; top:672px; transform:translateX(-50%);
+    text-align:center; white-space:nowrap; padding:10px 30px; overflow:hidden; line-height:1.15; }
+  .title .pre { font-size:70px; font-weight:600; color:#c6d6ee; letter-spacing:10px;
+    text-shadow:0 0 24px rgba(56,189,248,0.35); }
+  .title .hl { font-size:92px; font-weight:800; letter-spacing:12px; margin-left:6px;
+    background:linear-gradient(100deg, #38bdf8 0%, #a5f3fc 38%, #fbbf24 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 18px rgba(56,189,248,0.45)) drop-shadow(0 0 30px rgba(251,191,36,0.25)); }
+  .sweep { position:absolute; top:0; bottom:0; width:220px; transform:skewX(-18deg);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="bg"></div>
+  <div id="particles"></div>
+  <div class="vignette"></div>
+
+  <div class="card cardL" id="cardL">
+    <div class="tag">
+      <div class="t1">聊天式 <span class="accent">AI</span></div>
+      <div class="t2">豆包 · DeepSeek · 一问一答</div>
+    </div>
+    <div class="chat">
+      <div class="qb user" id="qUser">
+        <div class="av you"></div>
+        <div class="msg"><span class="who">你问</span>帮我写一份周报</div>
+      </div>
+      <div class="qb ai" id="qAi">
+        <div class="av ai"></div>
+        <div class="msg"><span class="who">它答</span>好的，这是你要的文案……</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cardR" id="cardR">
+    <div class="tag tagR">
+      <div class="t1"><span class="accent">WorkBuddy</span> · 会干活</div>
+      <div class="t2">办公 + 开发 + 设计 · 直接干完</div>
+    </div>
+    <div class="cols">
+      <div class="col off" id="colOff">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0b1224" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg></div>
+        <div class="ct">办公</div>
+        <div class="cd">文档 · 表格</div>
+      </div>
+      <div class="col dev" id="colDev">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0b1224" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg></div>
+        <div class="ct">开发</div>
+        <div class="cd">代码 · 测试</div>
+      </div>
+      <div class="col des" id="colDes">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0b1224" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 5.4 5.6 2.6-5.6 2.6L12 19l-2.4-5.4L4 11l5.6-2.6z"/></svg></div>
+        <div class="ct">设计</div>
+        <div class="cd">出图 · 排版</div>
+      </div>
+    </div>
+  </div>
+
+  <svg class="arrow" id="arrow" viewBox="0 0 410 80">
+    <defs>
+      <linearGradient id="ag" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#38bdf8"/>
+        <stop offset="0.6" stop-color="#7dd3fc"/>
+        <stop offset="1" stop-color="#fbbf24"/>
+      </linearGradient>
+      <filter id="aglow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="7" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <line id="arrowLine" x1="6" y1="40" x2="356" y2="40" stroke="url(#ag)" stroke-width="6"
+      stroke-linecap="round" filter="url(#aglow)" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+    <polygon id="arrowHead" points="376,40 344,21 344,59" fill="url(#ag)" filter="url(#aglow)"/>
+  </svg>
+
+  <div class="work-badge" id="workBadge">干 活</div>
+
+  <div class="title" id="title">
+    <span class="pre">不是替代谁，是</span><span class="hl">分工不同</span>
+    <div class="sweep" id="sweep"></div>
+  </div>
+</div>
+
+<script>
+  const W = 1920, H = 1080;
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+  function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
+  function easeOutBack(x){ const c1=1.70158, c3=c1+1; return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2); }
+  function seg(t, a, b){ return clamp01((t - a) / (b - a)); }
+  function mix(a, b, k){ return a + (b - a) * k; }
+  function wrap(v, m){ v = v % m; if (v < 0) v += m; return v; }
+
+  const cardL = document.getElementById('cardL');
+  const cardR = document.getElementById('cardR');
+  const qUser = document.getElementById('qUser');
+  const qAi = document.getElementById('qAi');
+  const colOff = document.getElementById('colOff');
+  const colDev = document.getElementById('colDev');
+  const colDes = document.getElementById('colDes');
+  const arrow = document.getElementById('arrow');
+  const arrowLine = document.getElementById('arrowLine');
+  const arrowHead = document.getElementById('arrowHead');
+  const workBadge = document.getElementById('workBadge');
+  const title = document.getElementById('title');
+  const sweep = document.getElementById('sweep');
+
+  // 漂浮粒子（确定性）
+  const P = 56;
+  const parts = [];
+  const pc = document.getElementById('particles');
+  const pCols = ['#7dd3fc', '#93c5fd', '#c4b5fd', '#fcd34d'];
+  for (let i = 0; i < P; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    const sz = 2 + (i % 4) * 1.7;
+    const col = pCols[i % 4];
+    d.style.width = d.style.height = sz + 'px';
+    d.style.background = col;
+    d.style.boxShadow = '0 0 ' + (6 + sz) + 'px ' + col;
+    pc.appendChild(d);
+    parts.push({ el: d, px: (i * 137.5) % W, py: (i * 211.3) % 800,
+      a: (i % 7) * 0.9, sp: 0.3 + (i % 5) * 0.12, amp: 8 + (i % 6) * 6,
+      rise: 8 + (i % 4) * 7, o: 0.22 + (i % 5) * 0.1 });
+  }
+
+  // 箭头能量粒子（沿箭头从左向右流动）
+  const EP = 10;
+  const energies = [];
+  for (let i = 0; i < EP; i++) {
+    const d = document.createElement('div');
+    d.className = 'energy';
+    d.style.width = d.style.height = (6 + (i % 3) * 3) + 'px';
+    arrow.appendChild(d);
+    energies.push({ el: d, off: i / EP, sp: 240 + (i % 3) * 40 });
+  }
+
+  // 干活徽章光环
+  const bx = 960, by = 458;
+
+  window.film = {
+    duration: 8,
+    frame(t) {
+      // 漂浮粒子
+      for (let i = 0; i < P; i++) {
+        const p = parts[i];
+        const y = wrap(p.py + Math.sin(t * p.sp + p.a) * p.amp - t * p.rise, 800);
+        const x = wrap(p.px + Math.cos(t * p.sp * 0.8 + p.a) * p.amp * 0.5, W);
+        p.el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+        p.el.style.opacity = p.o * (0.7 + 0.3 * Math.sin(t * 0.5 + p.a));
+      }
+
+      // 左卡片滑入
+      const lIn = easeOutCubic(seg(t, 0.2, 1.1));
+      cardL.style.opacity = lIn;
+      cardL.style.transform = 'translateX(' + ((1 - lIn) * -80) + 'px)';
+
+      // 右卡片滑入
+      const rIn = easeOutCubic(seg(t, 1.7, 2.7));
+      cardR.style.opacity = rIn;
+      cardR.style.transform = 'translateX(' + ((1 - rIn) * 80) + 'px)';
+
+      // 左侧气泡弹出
+      const quK = easeOutBack(clamp01(seg(t, 0.6, 1.3)));
+      qUser.style.opacity = seg(t, 0.6, 0.9);
+      qUser.style.transform = 'translateY(' + ((1 - quK) * 26) + 'px) scale(' + quK + ')';
+      const qaK = easeOutBack(clamp01(seg(t, 1.3, 2.0)));
+      qAi.style.opacity = seg(t, 1.3, 1.6);
+      qAi.style.transform = 'translateY(' + ((1 - qaK) * 26) + 'px) scale(' + qaK + ')';
+
+      // 右卡片三栏错峰弹出
+      const cols = [colOff, colDev, colDes];
+      for (let i = 0; i < cols.length; i++) {
+        const s0 = 2.5 + i * 0.35;
+        const k = easeOutBack(clamp01(seg(t, s0, s0 + 0.7)));
+        cols[i].style.opacity = easeOutCubic(clamp01(seg(t, s0, s0 + 0.35)));
+        cols[i].style.transform = 'translateY(' + ((1 - k) * 34) + 'px) scale(' + k + ')';
+      }
+
+      // 箭头画入
+      const aIn = seg(t, 3.3, 4.3);
+      arrow.style.opacity = aIn < 0.15 ? 0 : easeOutCubic(clamp01((aIn - 0.15) / 0.85));
+      arrowLine.style.strokeDashoffset = 1 - easeOutCubic(aIn);
+      const hIn = easeOutBack(clamp01(seg(t, 4.1, 4.7)));
+      arrowHead.style.transform = 'scale(' + hIn + ')';
+      arrowHead.style.transformOrigin = '376px 40px';
+
+      // 箭头能量粒子流动（持续）
+      for (let i = 0; i < EP; i++) {
+        const e = energies[i];
+        const k = wrap((t - 4.0) * (e.sp / 380) + e.off, 1);
+        const x = 8 + k * 360;
+        e.el.style.transform = 'translate(' + x + 'px,35px)';
+        e.el.style.opacity = (t < 4.0) ? 0 : (0.15 + 0.85 * (1 - Math.abs(k - 0.5) * 2));
+      }
+
+      // 干活徽章：爆发 + 脉动
+      const wIn = seg(t, 4.4, 5.3);
+      const wScale = wIn < 1 ? easeOutBack(wIn) : 1;
+      const wpulse = Math.sin((t - 5.3) * 2.2) * 0.04;
+      workBadge.style.opacity = seg(t, 4.4, 4.7);
+      workBadge.style.transform = 'translateX(-50%) scale(' + (wScale * (1 + wpulse)) + ')';
+      workBadge.style.boxShadow = '0 0 ' + (30 + 12 * Math.sin((t - 5.3) * 2.2)) + 'px rgba(56,189,248,0.55), 0 0 ' + (50 + 16 * Math.sin((t - 5.3) * 2.2)) + 'px rgba(251,191,36,0.3)';
+
+      // 标题浮现 + 扫光
+      const tiIn = easeOutCubic(seg(t, 5.8, 7.0));
+      title.style.opacity = tiIn;
+      title.style.transform = 'translateX(-50%) translateY(' + ((1 - tiIn) * 26) + 'px)';
+      const sw = seg(t, 6.8, 7.9);
+      sweep.style.left = mix(-260, title.offsetWidth + 60, sw) + 'px';
+      sweep.style.opacity = sw < 0.02 || sw > 0.98 ? 0 : 1;
+    }
+  };
+</script>
+</body>
+</html>

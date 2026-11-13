@@ -25,6 +25,7 @@ description: "WorkBuddy course visual component library: maps each spoken line t
   - `data` 数据图表（WB-D01 趋势折线 / D02 对比柱状）
   - `transition` 章节转场（WB-TR01 章节转场）
 - 每个组件带 `tags`（检索词）与 `searchHint`（口播在讲什么 → 先试哪个组件），按内容选画面，不按个人喜好硬套。
+- **组件 = 规格 + 代码模板**：`scene`/`action` 是文字规格；`code` 字段指向可复用的 frame(t) 源码模板（统一放 `templates/` 目录，如 `templates/WB-C01.html`）。**有代码模板的组件直接复制改**（换文字/素材/时序），禁止从零重写；`status: 待沉淀` 的组件首次实现后必须把源码提炼成模板补进 `templates/` 并回填 `code` 字段。
 
 ## 三、选型工作流（每段必做，不跳步）
 

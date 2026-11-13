@@ -20,7 +20,7 @@ skills: [bailian-gen, production-spec, animation-spec]
 2. **TTS 配音**：通过阿里云百炼 DashScope 接口调用 MiniMax 语音模型合成音频（合成 `MiniMax/speech-2.8-hd`、克隆 `speech-2.8-turbo`）。
 3. **配乐选材**：用 OpenFilm 免费 CC0 音乐库（`openfilm get music-search`）选背景乐，按 tempo / energy / 循环匹配。
 4. **音效选材**：用 OpenFilm 音效库（`openfilm get sfx-search`，约 5400 个 CC0）选转场、强调、按钮音效。
-5. **字幕**：用 ASR 或 TTS 稿生成 SRT 字幕。
+5. **字幕 + 字级时间戳**：用 ASR 生成 SRT 字幕；并用字级对齐（faster-whisper / FireRedASR 本机 CPU 对齐）产出**字级时间戳**，供动画动效逐字踩点。
 
 ## 工作流程
 1. 读取 TTS 朗读稿（纯文本）。
@@ -28,10 +28,11 @@ skills: [bailian-gen, production-spec, animation-spec]
 3. 用配音操作台合成音频：`app.py`（`start.bat` 启动 → 浏览器 127.0.0.1:5000），或直接调用百炼 `bl speech synthesize`。
 4. 调参（语速 0.9–1.2、音量 2–5、音调 -3~+3）直至定稿。
 5. 选配乐与音效：`openfilm get music-search --prompt <场景> --take <id>`、`openfilm get sfx-search --prompt <场景> --take <id>`，素材落 `assets/`，并按「(时刻, 名字)」记成音效事件表。
-6. 用 `bl speech recognize`（ASR）或由 TTS 稿生成 SRT 字幕。
+6. 生成字幕与字级时间戳：用 `bl speech recognize`（ASR）生成 SRT 字幕（句子级）；再用字级对齐脚本产出**字级时间戳 JSON**（每字 {字, 起, 止}），供视频导演做"动效踩字"。
 
 ## 输出规范
 - 配音：mp3（按分镜分段）。
+- 字级时间戳：JSON（每字 {字, 起, 止}，对齐配音）。
 - 配乐：背景乐文件 + 起止时间建议（音量 ≤ 人声 20%）。
 - 音效：音效文件 + 触发时间点。
 - 字幕：.srt（时间轴对齐配音）。
