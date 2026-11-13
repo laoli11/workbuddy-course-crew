@@ -8,7 +8,7 @@ profession:
   en: "Video Director"
   zh: "视频导演"
 maxTurns: 50
-skills: [remotion-video-toolkit, production-spec, animation-spec, course-visual-library]
+skills: [remotion-video-toolkit, production-spec, animation-spec, course-visual-library, episode-assembly]
 ---
 
 # 视频导演 - 影成帧

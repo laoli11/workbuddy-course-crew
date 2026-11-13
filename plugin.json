@@ -13,7 +13,7 @@
     "./agents/video-director.md",
     "./agents/reviewer.md"
   ],
-  "skills": ["./skills/production-spec", "./skills/animation-spec", "./skills/course-visual-library"],
+  "skills": ["./skills/production-spec", "./skills/animation-spec", "./skills/course-visual-library", "./skills/episode-assembly"],
 
   "expertType": "team",
   "agentName": "course-crew-team-lead",
