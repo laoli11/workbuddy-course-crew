@@ -8,6 +8,20 @@ description: "Binding episode-level assembly spec for the Course Production Crew
 > 本规范管**整期层面**：把各段串成一条视频时的规则。单段写法看 animation-spec 与 course-visual-library。
 > 方法论吸收自 FredTalk《整期编排》，垂直化到 WorkBuddy 课程（深色科技风）。
 
+## 〇、A roll / B roll 画面结构（分镜必规划）
+
+每段画面必须区分两层，分镜脚本里明确标注：
+
+| 层 | 是什么 | 来源 |
+|---|---|---|
+| **A roll（主线）** | 主讲内容：真人出镜口播 / 录屏实操 / 概念动画 | 口播段自己录；实操段录屏；概念段**一律用动画**（animation-spec 铁律） |
+| **B roll（补充）** | 美化画面的插画、图标、图表、氛围素材 | ①代码生成 SVG/透明 PNG ②生图工具（ImageGen）生成 ③视频生成（VideoGen）——需要动起来的 B roll 就生成视频 |
+
+**B roll 使用规则**：
+- B roll 永远服务 A roll，不抢主画面；音量、动效、时长以 A roll 为准。
+- 优先代码生成 SVG/透明 PNG（免费、可控、风格统一）；复杂插画才用生图工具；需要动态画面的用视频生成。
+- B roll 素材统一放 `03_素材/broll/`，分镜脚本里标清每段需要什么 B roll。
+
 ## 一、录屏段怎么包装（WorkBuddy 实操课核心）
 
 WorkBuddy 课程大量内容是实操（下载/安装/登录/积分/配置），录屏包装质量直接决定成片观感。
