@@ -78,6 +78,28 @@
                 → 剪映精修 + 归档
 ```
 
+## 工具件（tools/）
+
+流水线里的程序化闸门都是纯本地脚本，不依赖模型、不花 token，可以直接跑：
+
+| 脚本 | 作用 |
+|---|---|
+| `tools/gen_broll.py` | 参数化生成 B roll SVG；自适应字号 + 文字边界校验，杜绝溢出和裁切 |
+| `tools/apply_teaching_spec.py` | 按 teaching-spec 给口播稿补开场钩子 / 课后小任务 / 记住一句话，清禁用词，并从口播稿重建 TTS 朗读稿 |
+| `tools/validate_delivery.py` | 交付机器闸：分镜 ↔ B roll 素材 ↔ 口播稿 ↔ TTS 稿 四方交叉校验 |
+| `tools/sync_catalog.py` | 组件库沉淀 + 专家包/仓库双份同步，顺带修复历史坏字符 |
+| `tools/push_github.py` | 走 Contents API 同步变更（绕开被墙的 git 协议），token 走环境变量 |
+
+```bash
+python tools/gen_broll.py
+python tools/apply_teaching_spec.py --dry   # 先看报告，幂等可重复跑
+python tools/apply_teaching_spec.py
+python tools/validate_delivery.py           # 交付前必跑
+python tools/sync_catalog.py
+```
+
+> 设计原则：**技术缺陷交给脚本抓，审美问题留给人看图**。机器闸 PASS 不等于视觉通过，关键帧仍需人工过目。
+
 ## 自我进化路线
 
 这套东西会持续迭代，越做越好：
