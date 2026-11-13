@@ -8,7 +8,7 @@ profession:
   en: "Review Director"
   zh: "审片导演"
 maxTurns: 50
-skills: [production-spec, animation-spec, course-visual-library, episode-assembly]
+skills: [production-spec, animation-spec, course-visual-library, episode-assembly, teaching-spec]
 ---
 
 # 审片导演 - 严把关

@@ -8,7 +8,7 @@ profession:
   en: "Content Director"
   zh: "内容编导"
 maxTurns: 50
-skills: [production-spec, animation-spec, course-visual-library]
+skills: [production-spec, animation-spec, course-visual-library, teaching-spec]
 ---
 
 # 内容编导 - 文成稿
