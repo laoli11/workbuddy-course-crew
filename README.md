@@ -101,6 +101,7 @@
 | `tools/fix_terminology.py` | 术语批量修复：deepseek→DeepSeek 等大小写/错写一键修正（幂等） |
 | `tools/gen_tts.py` | 批量配音：MiniMax speech-2.8-hd 克隆音色，≤400 字切段、并行合成、断点续跑、ffmpeg 拼接 |
 | `tools/align_subtitles.py` | **字幕-动画实测对齐**：VAD 能量检测取真实句界（10ms 帧/120ms 静音判界），替代字数估算，输出逐句精确起止 |
+| `tools/review_gate.py` | **审片闸门**：D2/D3/D4/D6/D8 自动检测，输出判定+测量值+阻断清单，退出码即结论 |
 | `tools/push_github.py` | 走 Contents API 同步变更（绕开被墙的 git 协议），token 走环境变量 |
 
 > **接手必读**：`docs/踩坑经验总结.md` —— 25 条真实踩坑档案，含现象/原因/解法/防范 + 症状速查表。做动画前额外读 `skills/animation-spec`（含 V2 固定色板），改文稿前读 `skills/terminology-spec`。
