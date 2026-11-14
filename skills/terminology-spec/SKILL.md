@@ -25,7 +25,7 @@ description: "Binding terminology glossary for the Course Production Crew: the s
 
 | 档位 | 规则 | 例子 |
 |---|---|---|
-| `canonical`（权威写法） | 任何位置都用它，包括字幕 | WorkBuddy、DeepSeek、尧哥AI |
+| `canonical`（权威写法） | 任何位置都用它，包括字幕 | WorkBuddy、DeepSeek、尧哥 |
 | `forbidden`（禁用写法） | 任何位置都不许出现，机器闸硬拦 | workbody、workbuddy、姚哥 |
 | `aliases`（可用别名） | 口播稿口语化时可用，但**首次出现必须是 canonical** | 空间（canonical：工作空间） |
 
