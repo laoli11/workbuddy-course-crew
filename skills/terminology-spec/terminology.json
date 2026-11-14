@@ -6,7 +6,7 @@
     "exceptions": ["workbuddy.cn"],
     "space_rules": {    "口播稿中英加空格": true,
     "TTS稿去空格": true,
-    "whitelist": ["尧哥AI", "AI客服", "WorkBuddy课程", "AI大模型", "AI智能体", "去AI味", "C盘", "D盘"]
+    "whitelist": ["尧哥AI", "AI客服", "WorkBuddy课程", "AI大模型", "AI智能体", "去AI味", "C盘", "D盘", "AI课程", "AI技术", "Agent"]
   },
   "case_sensitive": {
     "强制": ["WorkBuddy", "DeepSeek", "Kimi", "Claude", "Codex", "Markdown", "GLM", "HY", "Open Cloud", "Cloud Bot", "Space Bunning"],
@@ -14,8 +14,7 @@
   },
   "terms": [
     {"canonical": "WorkBuddy", "forbidden": ["workbody", "work buddy", "workbuddy", "work八d", "沃克巴蒂"], "note": "产品名，W/B 大写"},
-    {"canonical": "尧哥", "forbidden": ["姚哥", "子木"], "note": "讲师名，自称尧哥，不带 AI 后缀"},
-    {"canonical": "尧哥AI", "forbidden": [], "note": "第05课案例：讲师自己的 ima 知识库名"},
+    {"canonical": "尧哥", "forbidden": ["姚哥", "子木"], "aliases": ["尧哥AI"], "note": "讲师名，自称尧哥；第05课案例的 ima 知识库名尧哥AI"},
     {"canonical": "DeepSeek", "forbidden": ["deepseek"], "note": "S 大写"},
     {"canonical": "豆包", "forbidden": [], "note": "字节 AI 产品"},
     {"canonical": "扣子", "forbidden": [], "aliases": ["Coze"], "note": "字节 AI 产品，原重心搭工作流"},
