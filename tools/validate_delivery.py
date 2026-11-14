@@ -17,6 +17,7 @@
 退出码 0 = 全通过，1 = 有阻断项
 """
 import glob
+import json
 import os
 import re
 import sys
@@ -27,6 +28,69 @@ from gen_broll import validate as validate_svg  # noqa: E402
 ROOT = r"E:/WorkBuddy课程/01_基础课"
 LESSONS = ["01", "02", "03", "04", "05", "06", "07"]
 BANNED = ["很简单", "不用说", "大家都知道", "随便", "想跳过也行"]
+
+
+def load_terminology():
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                     "skills", "terminology-spec", "terminology.json")
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def check_terminology(term, text, where, errors, warns, space_mode="expect"):
+    """术语闸：forbidden 硬拦、大小写错误硬拦、中英空格提醒。
+
+    space_mode: expect=口播稿（中英间应加空格）；none=TTS稿（不该有空格）；
+                off=分镜（文件名/表格除外，只查术语与大小写）。
+    """
+    # .workbody 是历史错词，先单独抓；.workbuddy 是合法目录名，占位避免误报
+    if ".workbody" in text.lower():
+        errors.append(f"{where} 历史错词「.workbody」→ 应为「.workbuddy」")
+    text = text.replace(".workbuddy", "\ue000DIR\ue000")
+    for e in term.get("exceptions", []):
+        text = text.replace(e, "\ue001URL\ue001")
+    low = text.lower()
+    # forbidden 与大小写检查去重：已在 forbidden 里的小写变体不再重复报
+    dup = {f.lower() for t in term["terms"] for f in t.get("forbidden", [])}
+    for t in term["terms"]:
+        canon = t["canonical"]
+        for f in t.get("forbidden", []):
+            for m in re.finditer(r"(?<![A-Za-z0-9.])(" + re.escape(f) + r")(?![A-Za-z0-9])", text, re.I):
+                if m.group(1) == canon:      # 正确写法本身不算违规
+                    continue
+                errors.append(f"{where} 禁用写法「{m.group(1)}」→ 应为「{canon}」")
+    for w in term["case_sensitive"]["强制"]:
+        if w.lower() in dup:
+            continue
+        for m in re.finditer(r"(?<![A-Za-z])(" + re.escape(w.lower()) + r")(?![A-Za-z])", text):
+            errors.append(f"{where} 大小写错误「{m.group(1)}」→ 应为「{w}」")
+    for w in term["case_sensitive"]["强制小写"]:
+        if w.lower() in dup:
+            continue
+        for m in re.finditer(r"(?<![A-Za-z])(" + re.escape(w.upper()) + r")(?![A-Za-z])", text):
+            errors.append(f"{where} 大小写错误「{m.group(1)}」→ 应为「{w}」")
+    if space_mode == "off":
+        return
+    wl = term["space_rules"]["whitelist"]
+    # 只查英文字母与中文之间（数字+中文如「22万次」「11点」是中文表述，不查）
+    pat = (r"[\u4e00-\u9fff] [A-Za-z]|[A-Za-z] [\u4e00-\u9fff]"
+           if space_mode == "none"
+           else r"[\u4e00-\u9fff][A-Za-z]|[A-Za-z][\u4e00-\u9fff]")
+    cnt = 0
+    for m in re.finditer(pat, text):
+        line = text[:m.start()].rsplit("\n", 1)[-1].strip()
+        if line.startswith("#"):          # markdown 标题行不查
+            continue
+        seg = text[max(0, m.start() - 4):m.end() + 4]
+        if any(w in seg for w in wl):
+            continue
+        cnt += 1
+        if cnt <= 8:
+            tag = "多空格" if space_mode == "none" else "缺空格"
+            warns.append(f"{where} 中英{tag}：…{seg}…")
+    if cnt > 8:
+        tag = "多空格" if space_mode == "none" else "缺空格"
+        warns.append(f"{where} 中英{tag}共 {cnt} 处（只列前 8）")
 
 
 def lesson_dir(n):
@@ -43,6 +107,11 @@ def main():
     errors, warns = [], []
     all_broll = set()
     storyboards = {}
+    try:
+        term = load_terminology()
+    except Exception as e:
+        errors.append(f"术语表加载失败：{e}")
+        term = None
 
     # 收集全季 B roll 文件
     for p in glob.glob(os.path.join(ROOT, "第*课_*", "03_素材", "broll", "*.svg")):
@@ -110,6 +179,12 @@ def main():
             warns.append(f"第{n}课 TTS 存在连续空行")
         if "最后给你留一个小任务" not in tts or "记住一句话" not in tts:
             errors.append(f"第{n}课 TTS 未同步结尾三件套")
+
+        # 7) 术语闸（分镜只查术语与大小写，口播稿要求中英空格，TTS 要求无空格）
+        if term:
+            check_terminology(term, sb, f"第{n}课·分镜", errors, warns, space_mode="off")
+            check_terminology(term, md, f"第{n}课·口播稿", errors, warns, space_mode="expect")
+            check_terminology(term, tts, f"第{n}课·TTS", errors, warns, space_mode="none")
 
     # 4) SVG 全量校验
     svg_fail = 0
