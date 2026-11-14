@@ -25,6 +25,8 @@ import sys
 
 ROOT = r"E:/WorkBuddy课程/01_基础课"
 LESSONS = ["01", "02", "03", "04", "05", "06", "07"]
+# 用户亲手改过的权威文稿，不再自动插入开场钩子（尊重用户原文）
+SKIP_HOOKS = {"01"}
 
 # ---------------------------------------------------------------- 开场钩子
 # (锚点句, 插入内容)。锚点句原文保留，钩子接在它后面。
@@ -372,8 +374,8 @@ def main():
                 md = md.replace(old, new)
                 changes.append("禁用词: " + old[:14])
 
-        # 2) 开场钩子（幂等：标记句已在文中则跳过）
-        if n in HOOKS:
+        # 2) 开场钩子（幂等：标记句已在文中则跳过；用户权威版跳过）
+        if n in HOOKS and n not in SKIP_HOOKS:
             anchor, hook = HOOKS[n]
             marker = hook.split("\n")[0]
             cnt = md.count(anchor)
