@@ -23,19 +23,22 @@
 | 视频导演 | 影成帧 | 查组件库选型、概念动画、录屏指导、音画合成 |
 | 审片导演 | 严把关 | 字幕/声音/画面/节奏质检、录屏必要性评估 |
 
-## 三个 Skill（核心资产）
+## 六个 Skill（核心资产）
 
 | Skill | 管什么 | 文件 |
 |---|---|---|
 | **production-spec** | 正确性：确定性渲染、字幕避让、音效音量、工程踩坑清单 | `skills/production-spec/SKILL.md` |
 | **animation-spec** | 丝滑感：先方案后渲染、先样片后全片、光晕+胶片颗粒、配音驱动、字幕按字对齐 | `skills/animation-spec/SKILL.md` |
 | **course-visual-library** | 画面从哪来：WorkBuddy 课程组件库 + 检索 + 门禁 + 成对样例 + 底层 kit | `skills/course-visual-library/` |
+| **episode-assembly** | 整期编排：A/B 双轨画面结构、录屏包装（推近/跟口播）、段间交接表、机器闸阈值 | `skills/episode-assembly/SKILL.md` |
+| **teaching-spec** | 教学法：SOP 四要素步骤链、术语即解释、每课一任务一条规则、开场钩子与耐心语气 | `skills/teaching-spec/SKILL.md` |
+| **terminology-spec** | 术语唯一事实源：防中途换模型术语漂移，机器闸硬拦禁用写法与大小写错误 | `skills/terminology-spec/` |
 
 ### 课程视觉组件库（catalog.json）
 
 把口播的表达意图映射到可复用画面组件，做动画前先检索、默认复用已认可组件，禁止脱离库原创。
 
-当前 19 个组件，5 类：概念动画（进化蜕变/定位对比/生态连接/流程步骤/层级架构）、实操录屏包装（下载/安装避坑/登录/积分/配置）、文字强调（要点列表/关键词结论/数字滚动/终端命令/提示词输入/长回复拎要点）、数据图表（趋势折线/对比柱状）、章节转场。
+当前 24 个组件，5 类：概念动画（进化蜕变/定位对比/生态连接/流程步骤/层级架构/记忆对比/文件夹归档/角色生长/跳焦/信息密度）、实操录屏包装（下载/安装避坑/登录/积分/配置）、文字强调（要点列表/关键词结论/数字滚动/终端命令/提示词输入/长回复拎要点）、数据图表（趋势折线/对比柱状）、章节转场。
 
 ## 目录结构
 
@@ -50,13 +53,18 @@
 │   ├── voice-director.md
 │   ├── video-director.md
 │   └── reviewer.md
-├── skills/                       # 3 个核心 skill
+├── skills/                       # 6 个核心 skill
 │   ├── production-spec/
 │   ├── animation-spec/
-│   └── course-visual-library/
+│   ├── course-visual-library/
+│   │   ├── SKILL.md
+│   │   ├── catalog.json
+│   │   └── references/paired-examples.md
+│   ├── episode-assembly/
+│   ├── teaching-spec/
+│   └── terminology-spec/
 │       ├── SKILL.md
-│       ├── catalog.json
-│       └── references/paired-examples.md
+│       └── terminology.json     # 术语唯一事实源（机器闸直接读取）
 └── docs/
     └── 剪辑专项规范.md            # 剪辑常见问题清单 + 音量参数
 ```
@@ -86,8 +94,10 @@
 |---|---|
 | `tools/gen_broll.py` | 参数化生成 B roll SVG；自适应字号 + 文字边界校验，杜绝溢出和裁切 |
 | `tools/apply_teaching_spec.py` | 按 teaching-spec 给口播稿补开场钩子 / 课后小任务 / 记住一句话，清禁用词，并从口播稿重建 TTS 朗读稿 |
-| `tools/validate_delivery.py` | 交付机器闸：分镜 ↔ B roll 素材 ↔ 口播稿 ↔ TTS 稿 四方交叉校验 |
+| `tools/validate_delivery.py` | 交付机器闸：分镜 ↔ B roll 素材 ↔ 口播稿 ↔ TTS 稿 四方交叉校验 + 术语闸 |
 | `tools/sync_catalog.py` | 组件库沉淀 + 专家包/仓库双份同步，顺带修复历史坏字符 |
+| `tools/fix_terminology.py` | 术语批量修复：deepseek→DeepSeek 等大小写/错写一键修正（幂等） |
+| `tools/gen_tts.py` | 批量配音：MiniMax speech-2.8-hd 克隆音色，≤400 字切段、并行合成、断点续跑、ffmpeg 拼接 |
 | `tools/push_github.py` | 走 Contents API 同步变更（绕开被墙的 git 协议），token 走环境变量 |
 
 ```bash
@@ -96,6 +106,8 @@ python tools/apply_teaching_spec.py --dry   # 先看报告，幂等可重复跑
 python tools/apply_teaching_spec.py
 python tools/validate_delivery.py           # 交付前必跑
 python tools/sync_catalog.py
+python tools/fix_terminology.py --dry
+python tools/gen_tts.py --lesson 01         # 先配一课试听
 ```
 
 > 设计原则：**技术缺陷交给脚本抓，审美问题留给人看图**。机器闸 PASS 不等于视觉通过，关键帧仍需人工过目。
