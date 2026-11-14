@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "updated": "2026-11-14T16:12:00+08:00",
+  "note": "课程制片唯一状态登记表。新会话开工前先读它，不要靠对话记忆。",
+  "repo": "D:/workbudyy/workbuddy-course-crew",
+  "workflow_doc": "docs/工作流v2.md",
+  "lessons": {
+    "01": {
+      "title": "第01课《入门》",
+      "dir": "E:/WorkBuddy课程/01_基础课/第01课_入门_未录制",
+      "stage": "P3",
+      "stage_name": "配音与对齐（G3 未过：字幕超 20 字）",
+      "facts_confirmed": true,
+      "authority_script": "E:/WorkBuddy课程/01_基础课/第01课_入门_未录制/01_逐字稿与脚本/第01课_口播稿.md",
+      "authority_note": "用户亲手改定版（2026-11-14 14:00 粘贴的尧哥版三节 + 其后内容），正文零改动，仅尾部追加课后小任务段落",
+      "sources": {
+        "tts": "01_逐字稿与脚本/第01课_TTS朗读稿.txt",
+        "storyboard": "01_逐字稿与脚本/第01课_分镜.json",
+        "storyboard_md": "01_逐字稿与脚本/第01课_分镜脚本.md",
+        "voice_dir": "02_配音/",
+        "align_json": "第01课_字幕_对齐.json",
+        "align_srt": "第01课_字幕_对齐.srt"
+      },
+      "draft": {
+        "current": "第一课_入门_分镜版",
+        "superseded": ["第一课_入门_草稿", "第一课_入门_草稿_v2", "第一课_入门_草稿_v3", "第一课_入门_草稿_v4", "第一课_入门_草稿_v5", "第一课_入门_草稿_v6", "第一课_入门_草稿_v7", "第一课_入门_草稿_v8", "第一课_入门_成品", "第一课_入门_成品v2"],
+        "note": "11 个历史版本，仅 current 有效；其余由用户自行在剪映删除"
+      },
+      "blocking": [
+        {"gate": "G3", "issue": "65 句字幕超 20 字、57 句语速 >5 字/秒", "fix": "字幕拆行（在标点处断句，单条 ≤20 字）"}
+      ],
+      "pending_record": [6, 7],
+      "pending_record_note": "段6=安装改D盘、段7=新建文件夹，需用户真人录屏；当前用 ctod/install 动画占位"
+    },
+    "02": {"title": "第02课《环境配置避坑》", "stage": "P2", "stage_name": "缺分镜 JSON", "facts_confirmed": true},
+    "03": {"title": "第03课《空间与模型》", "stage": "P2", "stage_name": "缺分镜 JSON", "facts_confirmed": true},
+    "04": {"title": "第04课《专家技能与定时任务》", "stage": "P2", "stage_name": "缺分镜 JSON", "facts_confirmed": true},
+    "05": {"title": "第05课《三种知识库》", "stage": "P2", "stage_name": "缺分镜 JSON", "facts_confirmed": true},
+    "06": {"title": "第06课《连接微信与企业微信》", "stage": "P2", "stage_name": "缺分镜 JSON", "facts_confirmed": true},
+    "07": {"title": "第07课《提示词专讲》", "stage": "P2", "stage_name": "缺分镜 JSON", "facts_confirmed": true}
+  },
+  "assets": {
+    "animation_cards": "D:/workbudyy/spaces/2026_11_13_20-02-16/openfilm/lesson01_cards/",
+    "long_scenes": "D:/workbudyy/spaces/2026_11_13_20-02-16/openfilm/ (Scene2_long / scene3/Scene3_long / scene4/Scene4_long)",
+    "cards": "D:/workbudyy/spaces/2026_11_13_20-02-16/output/提示卡/",
+    "bgm": "D:/workbudyy/spaces/2026_11_13_20-02-16/output/配乐_循环.mp3",
+    "final_specs": "D:/workbudyy/spaces/2026_11_13_20-02-16/lesson01_final/"
+  },
+  "env": {
+    "ffmpeg": "C:/Users/82668/bin/ffmpeg.exe",
+    "python": "C:/Users/82668/.workbuddy/binaries/python/versions/3.13.12/python.exe",
+    "jianying_draft": "C:/Users/82668/AppData/Local/JianyingPro/User Data/Projects/com.lveditor.draft",
+    "jianying_crypto": "validate_roundtrip=False, isolated=False（本机 11.7 必须这么设）"
+  }
+}
