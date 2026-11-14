@@ -3,8 +3,8 @@
   "version": "1.0.1",
   "description": "A full-pipeline production crew for WorkBuddy course recording: script, storyboard, voiceover, animation and final video assembly.",
   "author": {
-    "name": "尧哥AI",
-    "email": "yaoge-ai@workbuddy.cn"
+    "name": "尧哥",
+    "email": "zimu@workbuddy.cn"
   },
   "agents": [
     "./agents/course-crew-team-lead.md",
