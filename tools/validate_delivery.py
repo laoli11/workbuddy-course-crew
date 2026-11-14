@@ -28,6 +28,8 @@ from gen_broll import validate as validate_svg  # noqa: E402
 ROOT = r"E:/WorkBuddy课程/01_基础课"
 LESSONS = ["01", "02", "03", "04", "05", "06", "07"]
 BANNED = ["很简单", "不用说", "大家都知道", "随便", "想跳过也行"]
+# 用户亲手改过的权威文稿：开场钩子/禁用词检查降级为提醒，不阻断
+EXEMPT = {"01": ("开场钩子", "禁用词")}
 
 
 def load_terminology():
@@ -155,16 +157,19 @@ def main():
         if missing:
             errors.append(f"第{n}课 分镜引用了不存在的素材：{missing}")
 
-        # 5) teaching-spec
+        # 5) teaching-spec（权威版豁免项降级为提醒）
+        exc = EXEMPT.get(n, ())
         if not any(k in md for k in ("这节课解决什么问题", "我们解决一个问题", "这节课学完")):
-            errors.append(f"第{n}课 口播稿缺开场钩子")
+            msg = f"第{n}课 口播稿缺开场钩子"
+            (warns.append(msg) if "开场钩子" in exc else errors.append(msg))
         if "最后给你留一个小任务。" not in md:
             errors.append(f"第{n}课 口播稿缺课后小任务")
         if "记住一句话" not in md:
             errors.append(f"第{n}课 口播稿缺「记住一句话」")
         hit = [w for w in BANNED if w in md]
         if hit:
-            errors.append(f"第{n}课 口播稿残留禁用词：{hit}")
+            msg = f"第{n}课 口播稿残留禁用词：{hit}"
+            (warns.append(msg) if "禁用词" in exc else errors.append(msg))
 
         # 6) TTS 一致性
         src_lines = [l.strip() for l in md.split("\n")
