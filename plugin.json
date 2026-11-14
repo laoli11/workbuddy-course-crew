@@ -1,6 +1,6 @@
 {
   "name": "course-crew",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A full-pipeline production crew for WorkBuddy course recording: script, storyboard, voiceover, animation and final video assembly.",
   "author": {
     "name": "尧哥AI",
@@ -13,7 +13,7 @@
     "./agents/video-director.md",
     "./agents/reviewer.md"
   ],
-  "skills": ["./skills/production-spec", "./skills/animation-spec", "./skills/course-visual-library", "./skills/episode-assembly", "./skills/teaching-spec"],
+  "skills": ["./skills/production-spec", "./skills/animation-spec", "./skills/course-visual-library", "./skills/episode-assembly", "./skills/teaching-spec", "./skills/terminology-spec"],
 
   "expertType": "team",
   "agentName": "course-crew-team-lead",
