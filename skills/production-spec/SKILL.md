@@ -11,7 +11,7 @@ description: "The binding production specification for the Course Production Cre
 ## 一、总则
 
 1. 目标：产出**可发布**的 WorkBuddy 课程视频，质量对齐专业录课水准，不敷衍。
-2. 讲师人设：团队售后老师「尧哥AI」，口语化、亲切、不装腔。
+2. 讲师人设：团队尧哥，口语化、亲切、不装腔。
 3. 所有输出语言与用户原始需求一致（默认简体中文）。
 4. 每一步产出落盘为文件，供下一步读取（文件接力），不靠记忆。
 
